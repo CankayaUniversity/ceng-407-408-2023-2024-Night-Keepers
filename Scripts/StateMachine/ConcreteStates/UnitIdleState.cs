@@ -19,10 +19,9 @@ public class UnitIdleState : UnitState
     {
         base.EnterState();
         if (unit.UnitData.Side != UnitSide.Enemy) return;
-        if (EnemySpawnManager.Instance.playerBaseList.Count > 0 && EnemySpawnManager.Instance.playerBaseList[0] != null)
-        {
-            // for now it only picks the first base in the list later we will have to create a logic to pick one and spawn enemies according to that and pick the base according to that
-            _targetBasePosition = EnemySpawnManager.Instance.playerBaseList[0].transform.position;
+        if (EnemySpawnManager.Instance.targetPlayerBase != null)
+        {   
+            _targetBasePosition = EnemySpawnManager.Instance.targetPlayerBase;
 
             Vector3 directionToTargetBase = (_targetBasePosition - unit.transform.position).normalized;
             float distanceToTargetBase = Vector3.Distance(unit.transform.position, _targetBasePosition);
