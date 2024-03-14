@@ -16,6 +16,12 @@ public class Grid<T>
         set => _grid[gridPosition.x, gridPosition.y] = value;
     }
     
+    public T this[int x, int y]
+    {
+        get => _grid[x, y];
+        set => _grid[x, y] = value;
+    }
+    
     public Grid(int width, int height, int cellsize)
     {
         _width = width;
