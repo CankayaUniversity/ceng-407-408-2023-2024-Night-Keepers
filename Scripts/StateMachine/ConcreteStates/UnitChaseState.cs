@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.AI;
 
 public class UnitChaseState : UnitState
 {
@@ -17,17 +16,24 @@ public class UnitChaseState : UnitState
 
     public override void EnterState()
     {
+        unit.currentStateName = "Chase";
         base.EnterState();
     }
 
     public override void ExitState()
     {
         base.ExitState();
+        unit.ClearAggroStatus();
     }
 
     public override void UpdateState()
     {
         base.UpdateState();
+
+        if (!unit.GetCurrentTarget())
+        {
+            unit.LookForNewTarget();
+        }
 
         if (unit.isInAttackingDistance)
         {
