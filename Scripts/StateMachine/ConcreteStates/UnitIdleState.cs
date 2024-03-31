@@ -21,6 +21,7 @@ public class UnitIdleState : UnitState
         base.EnterState();
         if (unit.UnitData.Side != UnitSide.Enemy) return;
 
+        _targetBasePosition = PlayerBaseManager.Instance.GetSelectedBasePosition();
         Vector3 directionToTargetBase = (_targetBasePosition - unit.transform.position).normalized;
         float distanceToTargetBase = Vector3.Distance(unit.transform.position, _targetBasePosition);
         Vector3 straightLinePosition = unit.transform.position + directionToTargetBase * (distanceToTargetBase * 0.9f);
