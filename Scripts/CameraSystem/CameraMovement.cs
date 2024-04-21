@@ -34,11 +34,26 @@ namespace NightKeepers.Camera
             Vector3 forward = transform.forward * z;
 
             input = (right + forward).normalized;
-            if(!Input.GetMouseButton(1)) return;
-            targetAngle += Input.GetAxisRaw("Mouse X") * speed * 4;
-          
+
+            
+            if (Input.GetKey(KeyCode.Q))
+            {
+                targetAngle -= speed * 4; 
+            }
+
+            
+            if (Input.GetKey(KeyCode.E))
+            {
+                targetAngle += speed * 4; 
+            }
+
+            // Existing mouse rotation code
+            if (Input.GetMouseButton(1))
+            {
+                targetAngle += Input.GetAxisRaw("Mouse X") * speed * 4;
+            }
         }
-       
+
         private void Move()
         {
             Vector3 nextPosition = targetPosition + input * speed / 5;
