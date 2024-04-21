@@ -17,17 +17,15 @@ public class UnitIdleState : UnitState
 
     public override void EnterState()
     {
+        unit.currentStateName = "Idle";
         base.EnterState();
         if (unit.UnitData.Side != UnitSide.Enemy) return;
-        if (EnemySpawnManager.Instance.targetPlayerBase != null)
-        {   
-            _targetBasePosition = EnemySpawnManager.Instance.targetPlayerBase;
 
-            Vector3 directionToTargetBase = (_targetBasePosition - unit.transform.position).normalized;
-            float distanceToTargetBase = Vector3.Distance(unit.transform.position, _targetBasePosition);
-            Vector3 straightLinePosition = unit.transform.position + directionToTargetBase * (distanceToTargetBase * 0.9f);
-            unit.MoveUnit(straightLinePosition);
-        }
+        _targetBasePosition = PlayerBaseManager.Instance.GetSelectedBasePosition();
+        Vector3 directionToTargetBase = (_targetBasePosition - unit.transform.position).normalized;
+        float distanceToTargetBase = Vector3.Distance(unit.transform.position, _targetBasePosition);
+        Vector3 straightLinePosition = unit.transform.position + directionToTargetBase * (distanceToTargetBase * 0.9f);
+        unit.MoveUnit(straightLinePosition);
     }
 
     public override void ExitState()

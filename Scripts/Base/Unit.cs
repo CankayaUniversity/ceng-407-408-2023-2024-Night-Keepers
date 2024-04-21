@@ -6,6 +6,8 @@ using static UnitScriptableObject;
 
 public class Unit : MonoBehaviour, IDamageable, IMoveable, ITriggerCheckable
 {
+    [field: SerializeField] public string currentStateName { get; set; } = "Idle";
+
     public int CurrentHealth { get; set; }
 
     public UnitStateMachine StateMachine { get; set; }
@@ -29,6 +31,9 @@ public class Unit : MonoBehaviour, IDamageable, IMoveable, ITriggerCheckable
 
     public static event Action onBuildingDestroyed;
 
+    [HideInInspector]
+    public LayerMask playerLayer;
+
     private void Awake()
     {
         TryGetComponent(out NavMeshAgent agent);
@@ -38,6 +43,8 @@ public class Unit : MonoBehaviour, IDamageable, IMoveable, ITriggerCheckable
         IdleState = new UnitIdleState(this, StateMachine);
         ChaseState = new UnitChaseState(this, StateMachine);
         AttackState = new UnitAttackState(this, StateMachine);
+
+        playerLayer = LayerMask.GetMask("PlayerLayer");
     }
 
     private void Start()
@@ -228,5 +235,41 @@ public class Unit : MonoBehaviour, IDamageable, IMoveable, ITriggerCheckable
         }
         navAgent.CalculatePath(unit.transform.position, tempPath);
         return  tempPath.status == NavMeshPathStatus.PathComplete;
+    }
+
+    public void LookForNewTarget()
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, UnitData.DetectionRangeRadius, playerLayer);
+        Unit bestTarget = null;
+        int maxWeight = int.MinValue;
+
+        foreach (Collider col in colliders)
+        {
+            if (col.TryGetComponent(out Unit possibleTarget))
+            {
+                if (possibleTarget.GetUnitType() == GetFavouriteTarget())
+                {
+                    SetAggroStatusAndTarget(true, possibleTarget);
+                    return;
+                }
+
+                TargetPreference targetPreference = GetTargetPreferenceList().Find(T => T.unitType == possibleTarget.GetUnitType());
+                if (targetPreference != null && targetPreference.weight > maxWeight)
+                {
+                    maxWeight = targetPreference.weight;
+                    bestTarget = possibleTarget;
+                }
+            }
+        }
+
+        if (bestTarget != null)
+        {
+            SetAggroStatusAndTarget(true, bestTarget);
+        }
+        else
+        {
+            StateMachine.ChangeState(IdleState);
+            // failed to find target
+        }
     }
 }
