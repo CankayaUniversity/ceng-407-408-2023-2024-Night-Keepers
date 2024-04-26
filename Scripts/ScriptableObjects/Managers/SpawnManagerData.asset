@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 779c07f5f88ff604bad0a278512785c5, type: 3}
+  m_Name: SpawnManagerData
+  m_EditorClassIdentifier: 
+  _spawnDelay: 2
+  _zOffset: 10
+  _lowPowerPointThreshold: 5
+  _maxAmountOfWaves: 50
+  _wavePowerAtMax: 200
+  _wavePowerAtStart: 10
+  _spawnCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 1
+      value: 10
+      inSlope: 0.95707524
+      outSlope: 0.95707524
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.110999
+    - serializedVersion: 3
+      time: 50
+      value: 200
+      inSlope: 6.4482875
+      outSlope: 6.4482875
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.040363237
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  EnemyList:
+  - {fileID: 8846593138032247870, guid: 4cde2cad9bb8e2e46815834411c583c3, type: 3}
+  - {fileID: 8846593138032247870, guid: bb83b85efd2bf3646b7766525f5c17ee, type: 3}
+  - {fileID: 8846593138032247870, guid: 7af95c9d3bd2cf6428fbaeaa344703cc, type: 3}
