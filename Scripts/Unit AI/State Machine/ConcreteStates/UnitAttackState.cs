@@ -10,21 +10,17 @@ public class UnitAttackState : UnitState
 
     }
 
-    public override void AnimationTriggerEvent(Unit.AnimationTriggerType triggerType)
-    {
-        base.AnimationTriggerEvent(triggerType);
-    }
-
     public override void EnterState()
     {
         unit.currentStateName = "Attack";
         base.EnterState();
-        _target = unit.GetCurrentTarget().GetComponent<Unit>();
+        _target = unit.GetCurrentTargetUnit().GetComponent<Unit>();
         unit.StopUnit(true);
         unit.MoveUnit(unit.transform.position);
         Vector3 direction = _target.transform.position - unit.transform.position;
         Quaternion rotation = Quaternion.LookRotation(direction);
         unit.transform.rotation = rotation;
+        unit._animation.CrossFade("UndeadAttack1");
     }
 
     public override void ExitState()
@@ -37,12 +33,14 @@ public class UnitAttackState : UnitState
     {
         base.UpdateState();
 
-        if (!unit.GetCurrentTarget())
+        if (!unit.GetCurrentTargetUnit())
         {
             //target died clear target
             unit.ClearAttackStatusAndTarget();
-            //check for new target
-            unit.LookForNewTarget();
+            if (!unit.LookForNewAttackTarget())
+            {
+                unit.LookForNewChaseTarget();
+            }
         }
 
         if (_timer > unit.UnitData.TimeBetweenAttacks)

@@ -23,13 +23,11 @@ public class UnitAggroCheck : MonoBehaviour
                 switch (_thisUnit.StateMachine.CurrentUnitState)
                 {
                     case UnitIdleState:
-                        if (other.CompareTag("EnemyUnit")) return;
                         if (!other.transform.TryGetComponent(out Unit newTarget)) return;
 
                         _thisUnit.SetAggroStatusAndTarget(true, newTarget);
                         break;
                     case UnitChaseState:
-                        if (other.CompareTag("EnemyUnit")) return;
                         if (!other.transform.TryGetComponent(out Unit chasingNewTarget)) return;
 
                         if (_thisUnit.IsNewTargetBetter(chasingNewTarget.GetUnitType()))
@@ -38,7 +36,6 @@ public class UnitAggroCheck : MonoBehaviour
                         }
                         break;
                     case UnitAttackState:
-                        if (other.CompareTag("EnemyUnit")) return;
                         if (!other.transform.TryGetComponent(out Unit attackingNewTarget)) return;
 
                         if (_thisUnit.IsNewTargetBetter(attackingNewTarget.GetUnitType()))
@@ -50,6 +47,33 @@ public class UnitAggroCheck : MonoBehaviour
                 }
                 break;
             case UnitSide.Player:
+                if (_thisUnit.GetUnitType() == UnitType.Building) return;
+
+                switch (_thisUnit.StateMachine.CurrentUnitState)
+                {
+                    case UnitIdleState:
+                        if (!other.transform.TryGetComponent(out Unit newTarget)) return;
+
+                        _thisUnit.SetAggroStatusAndTarget(true, newTarget);
+                        break;
+                    case UnitChaseState:
+                        if (!other.transform.TryGetComponent(out Unit chasingNewTarget)) return;
+
+                        if (_thisUnit.IsNewTargetBetter(chasingNewTarget.GetUnitType()))
+                        {
+                            _thisUnit.SetAggroStatusAndTarget(true, chasingNewTarget);
+                        }
+                        break;
+                    case UnitAttackState:
+                        if (!other.transform.TryGetComponent(out Unit attackingNewTarget)) return;
+
+                        if (_thisUnit.IsNewTargetBetter(attackingNewTarget.GetUnitType()))
+                        {
+                            _thisUnit.ClearAttackStatusAndTarget();
+                            _thisUnit.SetAggroStatusAndTarget(true, attackingNewTarget);
+                        }
+                        break;
+                }
                 break;
         }
     }

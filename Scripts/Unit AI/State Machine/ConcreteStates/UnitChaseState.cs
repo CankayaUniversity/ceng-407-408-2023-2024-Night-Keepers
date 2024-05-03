@@ -9,15 +9,11 @@ public class UnitChaseState : UnitState
 
     }
 
-    public override void AnimationTriggerEvent(Unit.AnimationTriggerType triggerType)
-    {
-        base.AnimationTriggerEvent(triggerType);
-    }
-
     public override void EnterState()
     {
         unit.currentStateName = "Chase";
         base.EnterState();
+        unit._animation.CrossFade("UndeadRun1");
     }
 
     public override void ExitState()
@@ -30,34 +26,40 @@ public class UnitChaseState : UnitState
     {
         base.UpdateState();
 
-        if (!unit.GetCurrentTarget())
+        if (!unit.GetCurrentTargetUnit())
         {
-            unit.LookForNewTarget();
+            unit.LookForNewChaseTarget();
         }
 
         if (unit.isInAttackingDistance)
         {
             unit.StateMachine.ChangeState(unit.AttackState);
         }
-
-        if (DidTargetMove())
-        {
-            unit.MoveUnit(unit.GetValidPositionAroundTarget());
-        }
     }
 
     public override void PhysicsUpdateState()
     {
         base.PhysicsUpdateState();
+
+        if (unit.GetCurrentTargetUnit() && DidTargetMove(1f))
+        {
+            unit.MoveUnit(unit.GetValidPositionAroundTarget());
+        }
     }
 
-    private bool DidTargetMove()
+    private bool DidTargetMove(float threshold)
     {
-        if (_previousTargetPosition == unit.GetCurrentTargetPosition())
+        Vector3 previousPosition = _previousTargetPosition;
+        Vector3 currentPosition = unit.GetCurrentTargetPosition();
+
+        float distance = Vector3.Distance(previousPosition, currentPosition);
+
+        if (distance <= threshold)
         {
             return false;
         }
-        _previousTargetPosition = unit.GetCurrentTargetPosition();
+
+        _previousTargetPosition = currentPosition;
         return true;
     }
 }

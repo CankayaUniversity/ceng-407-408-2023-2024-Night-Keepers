@@ -25,8 +25,6 @@ public class EnemySpawnManager : MonoBehaviour
     private void OnEnable()
     {
         _waitForSeconds = new WaitForSeconds(_spawnManagerData._spawnDelay);
-        //_spawnManagerData._spawnCurve.MoveKey(0, new Keyframe(0, _spawnManagerData._wavePowerAtStart));
-        //_spawnManagerData._spawnCurve.MoveKey(_spawnManagerData._spawnCurve.length - 1, new Keyframe(_spawnManagerData._maxAmountOfWaves, _spawnManagerData._wavePowerAtMax));
     }
 
     private void Start()
@@ -43,13 +41,12 @@ public class EnemySpawnManager : MonoBehaviour
     {
         AlignSpawnPoints();
         int randomIndex = UnityEngine.Random.Range(0, _spawnPointList.Count);
-        StartCoroutine(SpawnEnemyWithDelay(_spawnPointList[randomIndex]));
+        StartCoroutine(SpawnEnemyWithDelay(_spawnPointList[3]));
     }
 
     IEnumerator SpawnEnemyWithDelay(Transform spawnPoint)
     {
         float currentWavePowerPoints = math.floor(_spawnManagerData._spawnCurve.Evaluate(_currentWaveNumber) + 0.5f);
-        print("Power Point: " + currentWavePowerPoints);
         while ( currentWavePowerPoints > 0)
         {
             Unit selectedEnemyUnit = SelectEnemyToSpawn((int)currentWavePowerPoints);

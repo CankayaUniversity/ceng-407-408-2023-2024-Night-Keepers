@@ -16,7 +16,7 @@ public class UnitAttackDistanceCheck : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_thisUnit.GetCurrentTarget() == other.gameObject)
+        if (_thisUnit.GetCurrentTargetObject() == other.gameObject)
         {
             _thisUnit.SetAttackingStatus(true);
         }
@@ -24,9 +24,10 @@ public class UnitAttackDistanceCheck : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (_thisUnit.GetCurrentTarget() == other.gameObject)
+        if (_thisUnit.GetCurrentTargetObject() == other.gameObject)
         {
             _thisUnit.SetAttackingStatus(false);
+            _thisUnit.SetAggroStatusAndTarget(true, _thisUnit.GetCurrentTargetUnit());
         }
     }
 }

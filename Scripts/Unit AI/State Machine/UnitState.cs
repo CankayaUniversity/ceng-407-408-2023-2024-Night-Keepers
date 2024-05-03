@@ -11,7 +11,7 @@ public class UnitState
         this.unitStateMachine = unitStateMachine;
     }
 
-    public virtual void EnterState() { }
+    public virtual void EnterState() {  }
     public virtual void ExitState() { }
     public virtual void UpdateState() { }
     public virtual void PhysicsUpdateState() { }
