@@ -10,12 +10,12 @@ public class BuildingUI : MonoBehaviour
     {
         buildingManager.SetBuildingType(BuildingData.BuildingType.Lumberjack);
     }
-    
+
     public void StoneMine()
     {
         buildingManager.SetBuildingType(BuildingData.BuildingType.StoneMine);
     }
-    
+
     public void IronMine()
     {
         buildingManager.SetBuildingType(BuildingData.BuildingType.IronMine);
@@ -29,5 +29,15 @@ public class BuildingUI : MonoBehaviour
     public void Test()
     {
         buildingManager.SetBuildingType(BuildingData.BuildingType.Test);
+    }
+
+    public void Wall()
+    {
+        buildingManager.SetBuildingType(BuildingData.BuildingType.Wall);
+    }
+
+    public void House()
+    {
+        buildingManager.SetBuildingType(BuildingData.BuildingType.House);
     }
 }

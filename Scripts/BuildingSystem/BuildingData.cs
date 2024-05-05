@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,35 +17,49 @@ public class BuildingData : ScriptableObject
             case Dir.Right: return Dir.Down;
         }
     }
-    
+
     public enum Dir
     {
         Up, Down, Left, Right
     }
-    
+
     public enum BuildingType
     {
-        Empty, StoneMine, IronMine, Lumberjack, TownHall, Test     
+        Empty, StoneMine, IronMine, Lumberjack, TownHall, Test, Wall, House
     }
 
     public BuildingType buildingTypes;
     public int health;
     public List<TileType> placableTileTypes;
     public Vector2Int widthHeight;
-    
-    public int wood;
-    public int stone;
-    public int iron;
-    public int food;
+    public Transform visual;
 
-    public int GetRotationAngle(Dir dir)
+    public int Workforce;
+    public ResourceCost Cost;
+    public int ProductionAmount;
+
+    public int resourceTileSize;
+
+    [System.Serializable]
+    public class ResourceCost
+    {
+        public int wood;
+        public int stone;
+        public int iron;
+        public int food;
+    }
+    // Restored
+
+
+
+public int GetRotationAngle(Dir dir)
     {
         switch (dir)
         {
             default:
-            case Dir.Down:  return 0;
-            case Dir.Left:  return 90;
-            case Dir.Up:    return 180;
+            case Dir.Down: return 0;
+            case Dir.Left: return 90;
+            case Dir.Up: return 180;
             case Dir.Right: return 270;
         }
     }
@@ -54,13 +69,13 @@ public class BuildingData : ScriptableObject
         switch (dir)
         {
             default:
-            case Dir.Down:  return new Vector2Int(0,0);
-            case Dir.Left:  return new Vector2Int(0, widthHeight.y);
-            case Dir.Up:    return new Vector2Int(widthHeight.y, 0);
-            case Dir.Right: return new Vector2Int(0, 0);
+            case Dir.Down: return new Vector2Int(0, 0);
+            case Dir.Left: return new Vector2Int(0, widthHeight.x / 2);
+            case Dir.Up: return new Vector2Int(widthHeight.x /2, widthHeight.y / 2);
+            case Dir.Right: return new Vector2Int(widthHeight.y / 2, 0);
         }
     }
-    
+
     public List<Vector2Int> GetGridPositionList(Vector2Int offset, Dir dir)
     {
         List<Vector2Int> gridPositionList = new List<Vector2Int>();
