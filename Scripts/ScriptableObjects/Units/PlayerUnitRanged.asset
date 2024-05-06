@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97ad304ca4ae95f4e99310481ddd3af7, type: 3}
   m_Name: PlayerUnitRanged
   m_EditorClassIdentifier: 
+  UnitName: 
   MaxHealth: 100
   Damage: 20
   TimeBetweenAttacks: 1.5
   DetectionRangeRadius: 20
   AttackRangeRadius: 1.5
-  movementSpeed: 6
+  MovementSpeed: 6
   targetPreferences:
   - unitType: 0
     weight: 1
@@ -25,6 +26,8 @@ MonoBehaviour:
     weight: 1
   - unitType: 2
     weight: 1
-  UnitPowerPoint: 1
-  Side: 0
+  UnitPowerPoints: 1
   Type: 2
+  Side: 0
+  UnitImagePrefab: {fileID: 0}
+  ProductionTime: 3

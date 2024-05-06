@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 97ad304ca4ae95f4e99310481ddd3af7, type: 3}
-  m_Name: UndeadSwordsmanBlue
+  m_Name: PlayerUnitMeleePurple
   m_EditorClassIdentifier: 
-  UnitName: Blue
-  MaxHealth: 140
-  Damage: 35
+  UnitName: Purple
+  MaxHealth: 100
+  Damage: 20
   TimeBetweenAttacks: 1.5
   DetectionRangeRadius: 20
   AttackRangeRadius: 2.5
@@ -25,9 +25,10 @@ MonoBehaviour:
   - unitType: 1
     weight: 1
   - unitType: 2
-    weight: 2
-  UnitPowerPoints: 5
+    weight: 1
+  UnitPowerPoints: 1
   Type: 1
-  Side: 1
-  UnitImagePrefab: {fileID: 0}
-  ProductionTime: 0
+  Side: 0
+  UnitImagePrefab: {fileID: 7878379943576522196, guid: f85e5bfdb1149db40a52fb3edc447328,
+    type: 3}
+  ProductionTime: 10

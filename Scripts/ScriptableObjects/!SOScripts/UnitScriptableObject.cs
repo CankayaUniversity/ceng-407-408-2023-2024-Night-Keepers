@@ -5,22 +5,15 @@ using static UnitScriptableObject;
 [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/UnitScriptableObject", order = 1)]
 public class UnitScriptableObject : ScriptableObject
 {
+    public string UnitName;
     public int MaxHealth = 100;
     public int Damage = 0;
     public float TimeBetweenAttacks = 0;
     public float DetectionRangeRadius = 0f;
     public float AttackRangeRadius = 0f;
-    public float movementSpeed = 0f;
+    public float MovementSpeed = 0f;
     public List<TargetPreference> targetPreferences = new List<TargetPreference>();
-
     public int UnitPowerPoints = 1;
-
-    public enum UnitSide
-    {
-        Player,
-        Enemy,
-    }
-    public UnitSide Side;
 
     public enum UnitType
     {
@@ -30,6 +23,17 @@ public class UnitScriptableObject : ScriptableObject
     }
     public UnitType Type;
 
+    public enum UnitSide
+    {
+        Player,
+        Enemy,
+    }
+    public UnitSide Side;
+
+    public GameObject UnitImagePrefab;
+
+    [Header("Only For Player Units!")]
+    public float ProductionTime = 0f;
 }
 
 [System.Serializable]

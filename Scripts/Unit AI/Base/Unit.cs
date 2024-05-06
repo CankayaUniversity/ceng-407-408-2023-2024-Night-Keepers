@@ -57,7 +57,7 @@ public class Unit : MonoBehaviour, IDamageable, IMoveable, ITriggerCheckable
 
         if (GetUnitType() != UnitType.Building)
         {
-            navAgent.speed = UnitData.movementSpeed;
+            navAgent.speed = UnitData.MovementSpeed;
         }
 
         FindFavouriteTarget();
@@ -87,7 +87,7 @@ public class Unit : MonoBehaviour, IDamageable, IMoveable, ITriggerCheckable
         }
     }
 
-    public void Die()
+    public virtual void Die()
     {
         if (UnitData.Type == UnitType.Building)
         {

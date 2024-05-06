@@ -5,7 +5,7 @@ using System.Collections;
 using NightKeepers;
 using Unity.Mathematics;
 
-public class EnemySpawnManager : MonoBehaviour
+public class EnemySpawnManager : Singleton<EnemySpawnManager>
 {
     private Vector3 _targetPlayerBase;
 
@@ -21,6 +21,8 @@ public class EnemySpawnManager : MonoBehaviour
     [SerializeField] private int _currentWaveNumber;
 
     [SerializeField] private SpawnManagerScriptableObject _spawnManagerData;
+
+    private int _aliveEnemyCount = 0;
 
     private void OnEnable()
     {
@@ -55,6 +57,7 @@ public class EnemySpawnManager : MonoBehaviour
             Vector3 spawnPosition = spawnPoint.position + spawnPoint.forward * randomZOffset;
 
             Instantiate(selectedEnemyUnit.gameObject, spawnPosition, Quaternion.identity);
+            _aliveEnemyCount++;
 
             yield return _waitForSeconds;
         }
@@ -109,5 +112,14 @@ public class EnemySpawnManager : MonoBehaviour
         _spawnPointList[1].position = new Vector3(_newOrigin.x - _mapSizeFromOrigin, 0, _targetPlayerBase.z);
         _spawnPointList[2].position = new Vector3(_targetPlayerBase.x, 0, _newOrigin.z + _mapSizeFromOrigin);
         _spawnPointList[3].position = new Vector3(_targetPlayerBase.x, 0, _newOrigin.z - _mapSizeFromOrigin);
+    }
+
+    public void DecreaseAliveEnemyCount()
+    {
+        _aliveEnemyCount--;
+        if (_aliveEnemyCount <= 0 )
+        {
+            Debug.Log("All Enemies Died.");
+        }
     }
 }

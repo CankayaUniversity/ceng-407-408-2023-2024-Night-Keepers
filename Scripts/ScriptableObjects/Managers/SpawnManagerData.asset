@@ -12,18 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 779c07f5f88ff604bad0a278512785c5, type: 3}
   m_Name: SpawnManagerData
   m_EditorClassIdentifier: 
-  _spawnDelay: 2
+  _spawnDelay: 0.5
   _zOffset: 10
   _lowPowerPointThreshold: 5
-  _maxAmountOfWaves: 50
-  _wavePowerAtMax: 200
-  _wavePowerAtStart: 10
   _spawnCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 1
-      value: 10
+      value: 5
       inSlope: 0.95707524
       outSlope: 0.95707524
       tangentMode: 0
@@ -43,6 +40,4 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   EnemyList:
-  - {fileID: 8846593138032247870, guid: 4cde2cad9bb8e2e46815834411c583c3, type: 3}
-  - {fileID: 8846593138032247870, guid: bb83b85efd2bf3646b7766525f5c17ee, type: 3}
-  - {fileID: 8846593138032247870, guid: 7af95c9d3bd2cf6428fbaeaa344703cc, type: 3}
+  - {fileID: 333135734097797818, guid: 4cde2cad9bb8e2e46815834411c583c3, type: 3}
