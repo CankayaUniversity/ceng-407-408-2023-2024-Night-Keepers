@@ -15,5 +15,5 @@ namespace NightKeepers.Research
             buttons.SetActiveSkills(canvas.GetUpgrades());
         }
     }
-    
+
 }
