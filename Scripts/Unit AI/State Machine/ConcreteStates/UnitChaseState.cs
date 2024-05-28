@@ -13,7 +13,7 @@ public class UnitChaseState : UnitState
     {
         unit.currentStateName = "Chase";
         base.EnterState();
-        unit._animation.CrossFade("UndeadRun1");
+        unit.Animation.CrossFade(unit.AnimationNames[1]);
     }
 
     public override void ExitState()

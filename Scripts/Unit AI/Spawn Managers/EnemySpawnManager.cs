@@ -9,10 +9,9 @@ public class EnemySpawnManager : Singleton<EnemySpawnManager>
 {
     private Vector3 _targetPlayerBase;
 
-    [SerializeField] private Vector3 _newOrigin;
+    private Vector3 _newOrigin;
 
-    [Header("Map Size From Origin to One Edge of the Map")]
-    public int _mapSizeFromOrigin;
+    private int _mapSizeFromOrigin;
 
     private List<Transform> _spawnPointList = new List<Transform>();
 
@@ -22,21 +21,43 @@ public class EnemySpawnManager : Singleton<EnemySpawnManager>
 
     [SerializeField] private SpawnManagerScriptableObject _spawnManagerData;
 
+    private List<GameObject> _enemyList = new List<GameObject>();
     private int _aliveEnemyCount = 0;
 
     private void OnEnable()
     {
         _waitForSeconds = new WaitForSeconds(_spawnManagerData._spawnDelay);
+
+        TimeManager.OnNightArrived += OnNightArrived;
+        TimeManager.OnDayArrived += OnDayArrived;
+    }
+
+    private void OnDisable()
+    {
+        TimeManager.OnNightArrived -= OnNightArrived;
+        TimeManager.OnDayArrived -= OnDayArrived;
     }
 
     private void Start()
     {
+        _newOrigin = GridManager.Instance._grid.GetCenterOfGrid();
+        _mapSizeFromOrigin = GridManager.Instance.GetMapSizeFromCenter();
+
         _spawnManagerData.EnemyList.Sort((a, b) => a.GetComponent<Unit>().GetUnitPowerPoints().CompareTo(b.GetComponent<Unit>().GetUnitPowerPoints()));
 
         _spawnPointList.AddRange(from Transform child in transform select child);
+    }
+
+    private void OnNightArrived()
+    {
         _targetPlayerBase = PlayerBaseManager.Instance.GetSelectedBasePosition();
-        // for now we do it in start but we will do it when the night comes
         PickSpawnPointAndSpawn();
+        _currentWaveNumber++;
+    }
+
+    private void OnDayArrived()
+    {
+        RemoveAllEnemies();
     }
 
     private void PickSpawnPointAndSpawn()
@@ -56,7 +77,8 @@ public class EnemySpawnManager : Singleton<EnemySpawnManager>
             float randomZOffset = UnityEngine.Random.Range(-_spawnManagerData._zOffset, _spawnManagerData._zOffset);
             Vector3 spawnPosition = spawnPoint.position + spawnPoint.forward * randomZOffset;
 
-            Instantiate(selectedEnemyUnit.gameObject, spawnPosition, Quaternion.identity);
+            _enemyList.Add(Instantiate(selectedEnemyUnit.gameObject, spawnPosition, Quaternion.identity));
+
             _aliveEnemyCount++;
 
             yield return _waitForSeconds;
@@ -121,5 +143,14 @@ public class EnemySpawnManager : Singleton<EnemySpawnManager>
         {
             Debug.Log("All Enemies Died.");
         }
+    }
+
+    public void RemoveAllEnemies()
+    {
+        foreach (GameObject enemy in _enemyList)
+        {
+            Destroy(enemy);
+        }
+        _enemyList.Clear();
     }
 }

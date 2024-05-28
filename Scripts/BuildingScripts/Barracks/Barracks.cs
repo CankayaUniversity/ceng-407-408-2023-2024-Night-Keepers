@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace NightKeepers
 {
-    public class Barracks : MonoBehaviour
+    public class Barracks : FunctionalBuilding
     {
         private List<Unit> _unitProductionList = new List<Unit>();
 

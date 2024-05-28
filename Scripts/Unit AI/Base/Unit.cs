@@ -1,4 +1,4 @@
-using System;
+using NightKeepers;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -28,9 +28,10 @@ public class Unit : MonoBehaviour, IDamageable, IMoveable, ITriggerCheckable
 
     [field: SerializeField] public UnitScriptableObject UnitData { get; set; }
 
-    [field: SerializeField] public Animation _animation { get; set; }
+    [field: SerializeField] public Animation Animation { get; set; }
+    public List<string> AnimationNames = new();
 
-    public static event Action onBuildingDestroyed;
+    [field: SerializeField] private FloatingHealthBar _healthBar { get; set; }
 
     [HideInInspector]
     public LayerMask playerLayer;
@@ -51,6 +52,16 @@ public class Unit : MonoBehaviour, IDamageable, IMoveable, ITriggerCheckable
         enemyLayer = LayerMask.GetMask("EnemyLayer");
     }
 
+    private void OnEnable()
+    {
+        if (GetUnitType() == UnitType.Building) return;
+
+        foreach (AnimationState animState in Animation)
+        {
+            AnimationNames.Add(animState.name);
+        }
+    }
+
     private void Start()
     {
         CurrentHealth = UnitData.MaxHealth;
@@ -58,6 +69,7 @@ public class Unit : MonoBehaviour, IDamageable, IMoveable, ITriggerCheckable
         if (GetUnitType() != UnitType.Building)
         {
             navAgent.speed = UnitData.MovementSpeed;
+            _healthBar.UpdateHealthBar(UnitData.MaxHealth, CurrentHealth);
         }
 
         FindFavouriteTarget();
@@ -80,7 +92,10 @@ public class Unit : MonoBehaviour, IDamageable, IMoveable, ITriggerCheckable
     public void TakeDamage(int damageAmount)
     {
         CurrentHealth -= damageAmount;
-
+        if (GetUnitType() != UnitType.Building)
+        {
+            _healthBar.UpdateHealthBar(UnitData.MaxHealth, CurrentHealth);
+        }
         if (CurrentHealth <= 0 )
         {
             Die();
@@ -89,10 +104,6 @@ public class Unit : MonoBehaviour, IDamageable, IMoveable, ITriggerCheckable
 
     public virtual void Die()
     {
-        if (UnitData.Type == UnitType.Building)
-        {
-            onBuildingDestroyed?.Invoke();
-        }
         Destroy(gameObject);
     }
 
@@ -200,6 +211,7 @@ public class Unit : MonoBehaviour, IDamageable, IMoveable, ITriggerCheckable
     {
         if (IsTargetReachable(target))
         {
+            //Debug.Log("Target reachable");
             this.isAggroed = isAggroed;
             Target = target.gameObject;
             CurrentTargetUnit = target;
@@ -207,8 +219,10 @@ public class Unit : MonoBehaviour, IDamageable, IMoveable, ITriggerCheckable
         }
         else
         {
+            //Debug.Log("Target is not reachable");
             if (currentStateName == "Attack")
             {
+                //Debug.Log("Target is not reachable attack");
                 ClearAttackStatusAndTarget();
                 StateMachine.ChangeState(IdleState);
             }
@@ -304,7 +318,7 @@ public class Unit : MonoBehaviour, IDamageable, IMoveable, ITriggerCheckable
                     {
                         if (possibleTarget.GetUnitType() == GetFavouriteTarget() )
                         {
-                            //Debug.Log(gameObject.name + " Found Favourite Player Chase Target.");
+                            // Debug.Log(gameObject.name + " Found Favourite Player Chase Target.");
                             SetAggroStatusAndTarget(true, possibleTarget);
                             return;
                         }
@@ -320,12 +334,12 @@ public class Unit : MonoBehaviour, IDamageable, IMoveable, ITriggerCheckable
 
                 if (bestPlayerTarget != null)
                 {
-                    //Debug.Log(gameObject.name + " Found Best Player Chase Target.");
+                    // Debug.Log(gameObject.name + " Found Best Player Chase Target." + bestPlayerTarget.name);
                     SetAggroStatusAndTarget(true, bestPlayerTarget);
                 }
                 else
                 {
-                    //Debug.Log(gameObject.name + " Could Not Find Any Player Chase Target.");
+                    // Debug.Log(gameObject.name + " Could Not Find Any Player Chase Target.");
                     StateMachine.ChangeState(IdleState);
                     // failed to find target
                 }

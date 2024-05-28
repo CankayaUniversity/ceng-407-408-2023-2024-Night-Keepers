@@ -20,7 +20,7 @@ public class UnitIdleState : UnitState
 
         if (unit.UnitData.Side != UnitSide.Enemy)
         {
-            unit._animation.CrossFade("SoldierIdle1");
+            unit.Animation.CrossFade(unit.AnimationNames[0]);
         }
         else
         {
@@ -29,7 +29,7 @@ public class UnitIdleState : UnitState
             float distanceToTargetBase = Vector3.Distance(unit.transform.position, _targetBasePosition);
             Vector3 straightLinePosition = unit.transform.position + directionToTargetBase * (distanceToTargetBase * 0.9f);
             unit.MoveUnit(straightLinePosition);
-            unit._animation.Play("UndeadRun1");
+            unit.Animation.CrossFade(unit.AnimationNames[1]);
         }
     }
 
