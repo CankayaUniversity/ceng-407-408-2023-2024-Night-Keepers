@@ -45,6 +45,8 @@ public class UnitChaseState : UnitState
         {
             unit.MoveUnit(unit.GetValidPositionAroundTarget());
         }
+
+        unit.LookForNewAttackTarget();
     }
 
     private bool DidTargetMove(float threshold)

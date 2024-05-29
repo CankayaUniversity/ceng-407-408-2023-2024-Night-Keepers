@@ -23,6 +23,9 @@ public class EnemySpawnManager : Singleton<EnemySpawnManager>
 
     private List<GameObject> _enemyList = new List<GameObject>();
     private int _aliveEnemyCount = 0;
+    private int _spawnPointIndex = 0;
+
+    private SpawnPositionIndicator _spawnPositionIndicator;
 
     private void OnEnable()
     {
@@ -46,25 +49,47 @@ public class EnemySpawnManager : Singleton<EnemySpawnManager>
         _spawnManagerData.EnemyList.Sort((a, b) => a.GetComponent<Unit>().GetUnitPowerPoints().CompareTo(b.GetComponent<Unit>().GetUnitPowerPoints()));
 
         _spawnPointList.AddRange(from Transform child in transform select child);
+
+        _spawnPositionIndicator = GetComponent<SpawnPositionIndicator>();
+    }
+
+    public void SetTargetBase(Vector3 basePosition)
+    {
+        _targetPlayerBase = basePosition;
+        AlignSpawnPoints();
+        PickSpawnPoint();
+        _spawnPositionIndicator.ObjectToFollow = _spawnPointList[_spawnPointIndex];
     }
 
     private void OnNightArrived()
     {
-        _targetPlayerBase = PlayerBaseManager.Instance.GetSelectedBasePosition();
-        PickSpawnPointAndSpawn();
+        StartSpawnProcess();
         _currentWaveNumber++;
+    }
+
+    private void StartSpawnProcess()
+    {
+        //AlignSpawnPoints();
+        //PickSpawnPoint();
+        SpawnEnemies();
     }
 
     private void OnDayArrived()
     {
         RemoveAllEnemies();
+        AlignSpawnPoints();
+        PickSpawnPoint();
+        _spawnPositionIndicator.ObjectToFollow = _spawnPointList[_spawnPointIndex];
     }
 
-    private void PickSpawnPointAndSpawn()
+    private void PickSpawnPoint()
     {
-        AlignSpawnPoints();
-        int randomIndex = UnityEngine.Random.Range(0, _spawnPointList.Count);
-        StartCoroutine(SpawnEnemyWithDelay(_spawnPointList[3]));
+        _spawnPointIndex = UnityEngine.Random.Range(0, _spawnPointList.Count);
+    }
+
+    private void SpawnEnemies()
+    {
+        StartCoroutine(SpawnEnemyWithDelay(_spawnPointList[_spawnPointIndex]));
     }
 
     IEnumerator SpawnEnemyWithDelay(Transform spawnPoint)
@@ -126,7 +151,6 @@ public class EnemySpawnManager : Singleton<EnemySpawnManager>
         }
         return highestPowerEnemy;
     }
-
 
     void AlignSpawnPoints()
     {

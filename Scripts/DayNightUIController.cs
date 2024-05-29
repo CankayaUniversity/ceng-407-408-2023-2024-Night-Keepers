@@ -15,11 +15,11 @@ namespace NightKeepers
 
                 if (TimeManager.Instance.IsDay)
                 {
-                    rotationAngle = Mathf.Lerp(180f, 0f, progressionRatio);
+                    rotationAngle = Mathf.Lerp(0f, -180f, progressionRatio);
                 }
                 else
                 {
-                    rotationAngle = Mathf.Lerp(0f, -180f, progressionRatio);
+                    rotationAngle = Mathf.Lerp(180f, 0f, progressionRatio);
                 }
                 dayNightIndicator.rotation = Quaternion.Euler(0, 0, rotationAngle);
             }

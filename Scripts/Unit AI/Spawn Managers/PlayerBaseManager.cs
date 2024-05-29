@@ -19,6 +19,7 @@ public class PlayerBaseManager : Singleton<PlayerBaseManager>
     private void OnMainBuildingPlaced(GameObject mainBuilding)
     {
         _playerBaseList.Add(mainBuilding);
+        EnemySpawnManager.Instance.SetTargetBase(GetSelectedBasePosition());
     }
 
     private void Start()

@@ -8,7 +8,7 @@ namespace NightKeepers
     {
         private Dictionary<Unit, int> _unitDictionary = new Dictionary<Unit, int>();
         private Dictionary<Unit, int> _placedUnitDictionary = new Dictionary<Unit, int>();
-        private List<GameObject> _placedUnitList = new List<GameObject>();
+        [SerializeField] private List<GameObject> _placedUnitList = new List<GameObject>();
 
         [SerializeField] private RectTransform _readyUnitHolder;
         [SerializeField] private List<GameObject> _unitButtons;
@@ -36,10 +36,14 @@ namespace NightKeepers
 
         private void OnPlacedUnitDied(Unit unit)
         {
-            if (_placedUnitDictionary.ContainsKey(unit))
+            foreach (var kvp in _placedUnitDictionary)
             {
-                _placedUnitDictionary[unit]--;
-                _placedUnitList.Remove(unit.gameObject);
+                if (kvp.Key.UnitData.UnitName == unit.UnitData.UnitName)
+                {
+                    _placedUnitDictionary[kvp.Key]--;
+                    _placedUnitList.Remove(unit.gameObject);
+                    break;
+                }
             }
         }
 

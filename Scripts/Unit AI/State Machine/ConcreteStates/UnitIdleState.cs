@@ -1,4 +1,3 @@
-using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 using static UnitScriptableObject;
 
@@ -50,40 +49,9 @@ public class UnitIdleState : UnitState
 
     public override void PhysicsUpdateState()
     {
-        if (unit.UnitData.Side == UnitSide.Player && unit.GetUnitType() != UnitType.Building)
+        if (unit.GetUnitType() != UnitType.Building)
         {
-            Collider[] enemyColliders = Physics.OverlapSphere(unit.transform.position, unit.UnitData.DetectionRangeRadius, unit.enemyLayer);
-            Unit bestEnemyTarget = null;
-            int maxEnemyWeight = int.MinValue;
-
-            foreach (Collider col in enemyColliders)
-            {
-                if (col.TryGetComponent(out Unit possibleTarget))
-                {
-                    if (possibleTarget.GetUnitType() == unit.GetFavouriteTarget())
-                    {
-                        unit.SetAggroStatusAndTarget(true, possibleTarget);
-                        return;
-                    }
-
-                    TargetPreference targetPreference = unit.GetTargetPreferenceList().Find(T => T.unitType == possibleTarget.GetUnitType());
-                    if (targetPreference != null && targetPreference.weight > maxEnemyWeight)
-                    {
-                        maxEnemyWeight = targetPreference.weight;
-                        bestEnemyTarget = possibleTarget;
-                    }
-                }
-            }
-
-            if (bestEnemyTarget != null)
-            {
-                unit.SetAggroStatusAndTarget(true, bestEnemyTarget);
-            }
-            else
-            {
-                unit.StateMachine.ChangeState(unit.IdleState);
-                // failed to find target
-            }
+            unit.LookForNewChaseTarget();
         }
         base.PhysicsUpdateState();
     }
