@@ -8,4 +8,6 @@ public class Building : MonoBehaviour
     public BuildingData.Dir direction = BuildingData.Dir.Down;
     public BuildingData.BuildingType buildingType = BuildingData.BuildingType.Empty;
 
+    public int sameTileCount = 0;
+
 }

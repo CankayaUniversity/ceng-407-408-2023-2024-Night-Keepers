@@ -76,4 +76,14 @@ public class Grid<T>
     {
         return (gridPosition.x >= 0 && gridPosition.y >= 0 && gridPosition.x < _grid.GetLength(0) && gridPosition.y < _grid.GetLength(1));
     }
+
+    public Vector3 GetCenterOfGrid()
+    { 
+        return new Vector3(_grid.GetLength(0) * _cellsize / 2, 0 ,_grid.GetLength(1) * _cellsize / 2);
+    }
+
+    public Vector2 GetXZRanges()
+    {
+        return new Vector2(_grid.GetLength(0) * _cellsize / 2, _grid.GetLength(1) * _cellsize / 2);
+    }
 }
