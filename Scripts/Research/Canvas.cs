@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using Unity.VisualScripting;
+using System.Collections;
 
 namespace NightKeepers.Research
 {
@@ -11,22 +9,50 @@ namespace NightKeepers.Research
         public TMP_Text researchText;
         private Upgrades _upgrades;
         private int cost;
+        [SerializeField] GameObject researchUI;
+        [SerializeField] private Buttons buttons;
+        private bool isResearchBuildingConstructed = false;
+
         public enum CanvasButtons
         {
-            Lumberjack,
-            Lumberjack1,
+            House,
+            Fishing,
             Farm,
-            IronMine,
+            MainHall,
             StoneMine,
+            Barracks,
+            ResearchBuilding,
             Wall,
             Others
         }
 
         void Start()
         {
-
-            researchText.text = researchText.GetComponent<TMP_Text>().text;
+            researchText.text = "0";
             StartCoroutine(UpdateText());
+            BuildingManager.OnBuildingPlaced += BuildingManager_OnBuildingPlaced;
+
+            _upgrades = FindObjectOfType<Upgrades>();
+
+            BuildingManager.Instance.SetUpgrades(_upgrades);
+
+            if (buttons != null)
+            {
+                buttons.SetActiveSkills(_upgrades);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            BuildingManager.OnBuildingPlaced -= BuildingManager_OnBuildingPlaced;
+        }
+
+        private void BuildingManager_OnBuildingPlaced()
+        {
+            if (BuildingManager.Instance.GetCurrentBuildingType() == BuildingData.BuildingType.ResearchBuilding)
+            {
+                isResearchBuildingConstructed = true;
+            }
         }
 
         IEnumerator UpdateText()
@@ -34,13 +60,31 @@ namespace NightKeepers.Research
             while (true)
             {
                 yield return new WaitForSeconds(2);
-                researchText.text = (int.Parse(researchText.text) + Random.Range(1, 4)).ToString();
+                if (isResearchBuildingConstructed)
+                {
+                    researchText.text = (int.Parse(researchText.text) + Random.Range(1, 4)).ToString();
+                }
+                else
+                {
+                    researchText.text = "0";
+                }
             }
         }
+
         private void Awake()
         {
             _upgrades = new Upgrades();
             _upgrades.OnResearchUnlocked += Upgrades_OnResearchUnlocked;
+        }
+
+        public void openResearchUI()
+        {
+            researchUI.SetActive(true);
+        }
+
+        public void closeResearchUI()
+        {
+            researchUI.SetActive(false);
         }
 
         private void Upgrades_OnResearchUnlocked(object sender, Upgrades.OnResearchUnlockedEventArgs e)
@@ -49,48 +93,37 @@ namespace NightKeepers.Research
             int.TryParse(researchText.text, out currentResearchValue);
             switch (e.researchUpgrades)
             {
-                case Upgrades.ResearchUpgrades.Lumberjack1:
+                case Upgrades.ResearchUpgrades.House:
                     if (currentResearchValue >= 20)
                     {
                         researchText.text = (currentResearchValue - 20).ToString();
+                        Debug.Log("House = Activated");
+                    }
+                    else
+                    {
+                        Debug.Log("Insufficient research value to unlock House.");
+                    }
+                    break;
+                case Upgrades.ResearchUpgrades.Fishing:
+                    if (currentResearchValue >= 50)
+                    {
+                        researchText.text = (currentResearchValue - 50).ToString();
+                        Debug.Log("FishingHouse = Activated");
+                    }
+                    else
+                    {
+                        Debug.Log("Insufficient research value to unlock FishingHouse.");
+                    }
+                    break;
+                case Upgrades.ResearchUpgrades.Lumberjack1:
+                    if (currentResearchValue >= 10)
+                    {
+                        researchText.text = (currentResearchValue - 10).ToString();
                         Debug.Log("Lumberjack1 = Activated");
                     }
                     else
                     {
                         Debug.Log("Insufficient research value to unlock Lumberjack1.");
-                    }
-                    break;
-                case Upgrades.ResearchUpgrades.Lumberjack2:
-                    if (currentResearchValue >= 50)
-                    {
-                        researchText.text = (currentResearchValue - 50).ToString();
-                        Debug.Log("Lumberjack2 = Activated");
-                    }
-                    else
-                    {
-                        Debug.Log("Insufficient research value to unlock Lumberjack2.");
-                    }
-                    break;
-                case Upgrades.ResearchUpgrades.Farm:
-                    if (currentResearchValue >= 10)
-                    {
-                        researchText.text = (currentResearchValue - 10).ToString();
-                        Debug.Log("Farm = Activated");
-                    }
-                    else
-                    {
-                        Debug.Log("Insufficient research value to unlock Farm.");
-                    }
-                    break;
-                case Upgrades.ResearchUpgrades.IronMine:
-                    if (currentResearchValue >= 10)
-                    {
-                        researchText.text = (currentResearchValue - 10).ToString();
-                        Debug.Log("IronMine = Activated");
-                    }
-                    else
-                    {
-                        Debug.Log("Insufficient research value to unlock IronMine.");
                     }
                     break;
                 case Upgrades.ResearchUpgrades.StoneMine:
@@ -118,13 +151,14 @@ namespace NightKeepers.Research
                 case Upgrades.ResearchUpgrades.OthersBuff:
                     Debug.Log("OthersBuff = Activated");
                     break;
-
             }
         }
+
 
         public Upgrades GetUpgrades()
         {
             return _upgrades;
         }
     }
+
 }
