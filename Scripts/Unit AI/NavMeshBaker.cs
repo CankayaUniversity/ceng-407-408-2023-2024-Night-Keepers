@@ -5,29 +5,40 @@ using Unity.AI.Navigation;
 public class NavMeshBaker : MonoBehaviour
 {
     private NavMeshSurface meshSurface;
-    private float bakeDelay = 0.01f;
-    private WaitForSeconds waitForSeconds;
+    private float bakeDelay = 0.02f;
 
+    private WaitForSeconds waitForSeconds;
     private Coroutine bakeCoroutine;
+
+    private void Awake()
+    {
+        meshSurface = GetComponent<NavMeshSurface>();
+    }
 
     private void Start()
     {
-        meshSurface = GetComponent<NavMeshSurface>();
-        BakeNavMesh();
+        //BakeNavMesh();
 
         waitForSeconds = new WaitForSeconds(bakeDelay);
     }
 
     private void OnEnable()
     {
-        Unit.onBuildingDestroyed += OnBuildingDestroyed;
+        TestBuilding.onBuildingDestroyed += OnBuildingDestroyed;
         GridManager.onWorldGenerationDone += OnWorldGenerationDone;
+        BuildingManager.OnBuildingPlaced += OnBuildingPlaced;
     }
 
     private void OnDisable()
     {
-        Unit.onBuildingDestroyed -= OnBuildingDestroyed;
+        TestBuilding.onBuildingDestroyed -= OnBuildingDestroyed;
         GridManager.onWorldGenerationDone -= OnWorldGenerationDone;
+        BuildingManager.OnBuildingPlaced -= OnBuildingPlaced;
+    }
+
+    private void OnBuildingPlaced()
+    {
+        meshSurface.UpdateNavMesh(meshSurface.navMeshData);
     }
 
     private void OnBuildingDestroyed()
@@ -42,13 +53,13 @@ public class NavMeshBaker : MonoBehaviour
     private void OnWorldGenerationDone()
     {
         BakeNavMesh();
-        Debug.Log("bake done");
     }
 
     private IEnumerator BakeNavMeshWithDelay()
     {
         yield return waitForSeconds;
-        BakeNavMesh();
+
+        meshSurface.UpdateNavMesh(meshSurface.navMeshData);
     }
 
     private void BakeNavMesh()

@@ -1,56 +1,66 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using System;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
 namespace NightKeepers
 {
-    public class TimeManager : MonoBehaviour
+    public class TimeManager : Singleton<TimeManager>
     {
-        public static TimeManager Instance { get; private set; }
+        [SerializeField] private float dayTimeLength;
+        [SerializeField] private float nightTimeLength;
 
+        private float timeLength;
         private float _globalTime;
-        private bool _isDay = true; 
+        private bool _isDay = true;
 
-        public float GlobalTime // Use Access the time from other scripts
+        public static event Action OnNightArrived;
+        public static event Action OnDayArrived;
+
+        public bool isTimeStarted = false;
+
+        public float GlobalTime
         {
             get { return _globalTime; }
         }
 
-        public bool IsDay // Use Access the day events from other scripts
+        public bool IsDay
         {
             get { return _isDay; }
         }
-        
-        void Awake()
+
+        private void Start()
         {
-            ;
-            if (Instance == null)  
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
+            timeLength = dayTimeLength;
         }
 
         void Update()
         {
-            _globalTime += Time.deltaTime;
-
-            
-            if (_globalTime >= 10f)
+            if (isTimeStarted)
             {
+                _globalTime += Time.deltaTime;
+
                 
-                _globalTime = 0f;
-                _isDay = !_isDay;
+                if (_globalTime >= timeLength)
+                {
+                    _globalTime = 0f;
+                    _isDay = !_isDay;
+
+                    if (!_isDay)
+                    {
+                        timeLength = nightTimeLength;
+                        OnNightArrived?.Invoke();
+                    }
+                    else
+                    {
+                        timeLength = dayTimeLength;
+                        OnDayArrived?.Invoke();
+                    }
+                }
             }
-            Debug.Log(IsDay);
-            Debug.LogError(_globalTime);
+        }
+
+        public float GetProgressionRatio()
+        {
+            return _globalTime / timeLength;
         }
     }
-
 }

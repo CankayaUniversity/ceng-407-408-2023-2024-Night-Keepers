@@ -1,4 +1,3 @@
-using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 using static UnitScriptableObject;
 
@@ -20,7 +19,7 @@ public class UnitIdleState : UnitState
 
         if (unit.UnitData.Side != UnitSide.Enemy)
         {
-            unit._animation.CrossFade("SoldierIdle1");
+            unit.Animation.CrossFade(unit.AnimationNames[0]);
         }
         else
         {
@@ -29,7 +28,7 @@ public class UnitIdleState : UnitState
             float distanceToTargetBase = Vector3.Distance(unit.transform.position, _targetBasePosition);
             Vector3 straightLinePosition = unit.transform.position + directionToTargetBase * (distanceToTargetBase * 0.9f);
             unit.MoveUnit(straightLinePosition);
-            unit._animation.Play("UndeadRun1");
+            unit.Animation.CrossFade(unit.AnimationNames[1]);
         }
     }
 
@@ -50,40 +49,9 @@ public class UnitIdleState : UnitState
 
     public override void PhysicsUpdateState()
     {
-        if (unit.UnitData.Side == UnitSide.Player && unit.GetUnitType() != UnitType.Building)
+        if (unit.GetUnitType() != UnitType.Building)
         {
-            Collider[] enemyColliders = Physics.OverlapSphere(unit.transform.position, unit.UnitData.DetectionRangeRadius, unit.enemyLayer);
-            Unit bestEnemyTarget = null;
-            int maxEnemyWeight = int.MinValue;
-
-            foreach (Collider col in enemyColliders)
-            {
-                if (col.TryGetComponent(out Unit possibleTarget))
-                {
-                    if (possibleTarget.GetUnitType() == unit.GetFavouriteTarget())
-                    {
-                        unit.SetAggroStatusAndTarget(true, possibleTarget);
-                        return;
-                    }
-
-                    TargetPreference targetPreference = unit.GetTargetPreferenceList().Find(T => T.unitType == possibleTarget.GetUnitType());
-                    if (targetPreference != null && targetPreference.weight > maxEnemyWeight)
-                    {
-                        maxEnemyWeight = targetPreference.weight;
-                        bestEnemyTarget = possibleTarget;
-                    }
-                }
-            }
-
-            if (bestEnemyTarget != null)
-            {
-                unit.SetAggroStatusAndTarget(true, bestEnemyTarget);
-            }
-            else
-            {
-                unit.StateMachine.ChangeState(unit.IdleState);
-                // failed to find target
-            }
+            unit.LookForNewChaseTarget();
         }
         base.PhysicsUpdateState();
     }
