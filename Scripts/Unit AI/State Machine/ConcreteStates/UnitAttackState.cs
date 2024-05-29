@@ -20,7 +20,7 @@ public class UnitAttackState : UnitState
         Vector3 direction = _target.transform.position - unit.transform.position;
         Quaternion rotation = Quaternion.LookRotation(direction);
         unit.transform.rotation = rotation;
-        unit._animation.CrossFade("UndeadAttack1");
+        unit.Animation.CrossFade(unit.AnimationNames[2]);
     }
 
     public override void ExitState()

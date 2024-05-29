@@ -6,9 +6,25 @@ public class PlayerBaseManager : Singleton<PlayerBaseManager>
     [SerializeField]
     private List<GameObject> _playerBaseList = new List<GameObject>();
 
+    private void OnEnable()
+    {
+        BuildingManager.OnMainBuildingPlaced += OnMainBuildingPlaced;
+    }
+
+    private void OnDisable()
+    {
+        BuildingManager.OnMainBuildingPlaced -= OnMainBuildingPlaced;
+    }
+
+    private void OnMainBuildingPlaced(GameObject mainBuilding)
+    {
+        _playerBaseList.Add(mainBuilding);
+        EnemySpawnManager.Instance.SetTargetBase(GetSelectedBasePosition());
+    }
+
     private void Start()
     {
-        _playerBaseList.Add(GameObject.Find("PlayerMainBuilding"));
+        //_playerBaseList.Add(GameObject.Find("PlayerMainBuilding"));
     }
 
     public Vector3 GetSelectedBasePosition()
